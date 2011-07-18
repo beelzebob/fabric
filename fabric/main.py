@@ -15,6 +15,7 @@ from optparse import OptionParser
 import os
 import sys
 import types
+import hostlist
 
 from fabric import api, state  # For checking callables against the API, & easy mocking
 from fabric.contrib import console, files, project  # Ditto
@@ -523,13 +524,13 @@ def parse_arguments(arguments):
                         if k == 'host':
                             hosts = [v.strip()]
                         elif k == 'hosts':
-                            hosts = [x.strip() for x in v.split(';')]
+                            hosts = hostlist.expand_hostlist(','.join([x.strip() for x in v.split(';')]))
                         elif k == 'role':
                             roles = [v.strip()]
                         elif k == 'roles':
                             roles = [x.strip() for x in v.split(';')]
                         elif k == 'exclude_hosts':
-                            exclude_hosts = [x.strip() for x in v.split(';')]
+                            exclude_hosts = hostlist.expand_hostlist(','.join([x.strip() for x in v.split(';')]))
                     # Otherwise, record as usual
                     else:
                         kwargs[k] = v
@@ -649,7 +650,7 @@ def main():
         # Handle --hosts, --roles, --exclude-hosts (comma separated string => list)
         for key in ['hosts', 'roles', 'exclude_hosts']:
             if key in state.env and isinstance(state.env[key], basestring):
-                state.env[key] = state.env[key].split(',')
+                state.env[key] = hostlist.expand_hostlist(state.env[key])
 
         # Handle output control level show/hide
         update_output_levels(show=options.show, hide=options.hide)
