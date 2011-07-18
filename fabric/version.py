@@ -21,7 +21,7 @@ def git_sha():
     return p.communicate()[0]
 
 
-VERSION = (1, 0, 0, 'final', 0)
+VERSION = (1, 2, 0, 'final', 0)
 
 def get_version(form='short'):
     """
@@ -92,6 +92,6 @@ def get_version(form='short'):
     try:
         return versions[form]
     except KeyError:
-        raise TypeError, '"%s" is not a valid form specifier.' % form
+        raise TypeError('"%s" is not a valid form specifier.' % form)
 
 __version__ = get_version('short')
